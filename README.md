@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Spec](https://img.shields.io/badge/MCP%20Spec-2025--11--25%20Streamable%20HTTP-blue.svg)](https://modelcontextprotocol.io/)
 [![AWS Builder](https://img.shields.io/badge/AWS-Bedrock%20%7C%20AgentCore-FF9900.svg)](https://aws.amazon.com/bedrock/)
-[![Tests](https://img.shields.io/badge/Tests-10%2F10%20Passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-65%2F65%20Passed-brightgreen.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-Laptop--Native%20%28Zero%20HW%20Req%29-purple.svg)]()
 
 > **Submission for the Amazon Developer Hackathon (Build, Ship, Shape 2026)**  

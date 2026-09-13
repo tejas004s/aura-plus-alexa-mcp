@@ -6,22 +6,67 @@
     {
       "name": "Mom (Elena)",
       "relation": "Mother",
-      "dietary_restrictions": ["Strict Shellfish Allergy", "Gluten-Sensitive"],
-      "preferences": ["Loves Mediterranean cuisine", "Prefers decaf beverages in evening"],
+      "dietary_restrictions": [
+        "Strict Shellfish Allergy",
+        "Gluten-Sensitive"
+      ],
+      "preferences": [
+        "Loves Mediterranean cuisine",
+        "Prefers decaf beverages in evening"
+      ],
       "frequent_guest": true
     },
     {
       "name": "Dad (Robert)",
       "relation": "Father",
-      "dietary_restrictions": ["Low-Sodium preference"],
-      "preferences": ["Loves bold Tuscan Chianti wines", "Enjoys acoustic jazz dinner playlists"],
+      "dietary_restrictions": [
+        "Low-Sodium preference"
+      ],
+      "preferences": [
+        "Loves bold Tuscan Chianti wines",
+        "Enjoys acoustic jazz dinner playlists"
+      ],
       "frequent_guest": true
     },
     {
       "name": "Alex",
       "relation": "Self",
-      "dietary_restrictions": ["None"],
-      "preferences": ["Enjoys Italian cooking", "Early riser"]
+      "dietary_restrictions": [
+        "None"
+      ],
+      "preferences": [
+        "Enjoys Italian cooking",
+        "Early riser"
+      ]
+    },
+    {
+      "name": "TestUser",
+      "relation": "Guest",
+      "dietary_restrictions": [],
+      "preferences": [
+        "Likes Apples"
+      ],
+      "frequent_guest": false
+    },
+    {
+      "name": "NewBob",
+      "relation": "Guest",
+      "dietary_restrictions": [],
+      "preferences": [
+        "Likes Cheese"
+      ],
+      "frequent_guest": false
+    },
+    {
+      "name": "Jane",
+      "relation": "Guest",
+      "dietary_restrictions": [
+        "Peanut Allergy"
+      ],
+      "preferences": [
+        "Likes Pasta"
+      ],
+      "frequent_guest": false
     }
   ],
   "preferences": {
@@ -41,28 +86,44 @@
       "id": "dev_echo_show_15",
       "name": "Kitchen Echo Show 15",
       "type": "Alexa+ Smart Display",
-      "capabilities": ["display", "voice", "mcp_apps", "streamable_http"],
+      "capabilities": [
+        "display",
+        "voice",
+        "mcp_apps",
+        "streamable_http"
+      ],
       "status": "online"
     },
     {
       "id": "dev_fire_tv_omni",
       "name": "Living Room Fire TV Omni",
       "type": "Fire TV",
-      "capabilities": ["video", "audio", "ambient_mode"],
+      "capabilities": [
+        "video",
+        "audio",
+        "ambient_mode"
+      ],
       "status": "online"
     },
     {
       "id": "dev_ring_doorbell",
       "name": "Front Door Ring Video Doorbell Pro",
       "type": "Ring Doorbell",
-      "capabilities": ["camera", "two_way_audio", "access_control"],
+      "capabilities": [
+        "camera",
+        "two_way_audio",
+        "access_control"
+      ],
       "status": "online"
     },
     {
       "id": "dev_smart_thermostat",
       "name": "Living Room Smart Thermostat",
       "type": "Climate",
-      "capabilities": ["temperature_control", "scheduling"],
+      "capabilities": [
+        "temperature_control",
+        "scheduling"
+      ],
       "current_temp_f": 68,
       "target_temp_f": 71,
       "status": "online"

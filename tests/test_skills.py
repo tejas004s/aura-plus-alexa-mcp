@@ -56,5 +56,6 @@ def test_calendar_concierge():
         start_time="Friday 7:00 PM",
         end_time="Friday 10:00 PM"
     )
-    assert evt["event"]["status"] == "confirmed"
+    assert evt["event"]["status"] in ["confirmed", "confirmed_with_overlap"]
     assert "mcp_app_card" in evt
+    assert "conflict_detected" in evt

@@ -128,6 +128,26 @@ TOOLS_REGISTRY: Dict[str, MCPToolDefinition] = {
             },
             required=["user_prompt"]
         )
+    ),
+    "calendar_delete_event": MCPToolDefinition(
+        name="calendar_delete_event",
+        description="Removes a scheduled event from the household calendar by event ID.",
+        inputSchema=ToolParamSchema(
+            properties={
+                "event_id": {"type": "string", "description": "The ID of the event to delete"}
+            },
+            required=["event_id"]
+        )
+    ),
+    "calendar_get_day_events": MCPToolDefinition(
+        name="calendar_get_day_events",
+        description="Lists all scheduled events for a specific day of the week.",
+        inputSchema=ToolParamSchema(
+            properties={
+                "day": {"type": "string", "description": "Day name, e.g., 'Friday', 'Saturday'"}
+            },
+            required=["day"]
+        )
     )
 }
 
@@ -207,6 +227,10 @@ async def execute_tool_call(name: str, arguments: Dict[str, Any]) -> Dict[str, A
         # Import lazily to avoid circular imports with orchestrator
         from aws_orchestrator.agent_core import agent_core_orchestrator
         return await agent_core_orchestrator.process_request(arguments.get("user_prompt", ""))
+    elif name == "calendar_delete_event":
+        return calendar_concierge_skill.delete_event(arguments.get("event_id", ""))
+    elif name == "calendar_get_day_events":
+        return calendar_concierge_skill.get_events_for_day(arguments.get("day", ""))
     else:
         raise ValueError(f"Unknown MCP tool: '{name}'")
 
@@ -291,6 +315,17 @@ async def mcp_message_handler(request: Request, session_id: Optional[str] = Quer
         elif method == "prompts/list":
             prompts_list = [p.model_dump() for p in PROMPTS_REGISTRY.values()]
             response_data = {"prompts": prompts_list}
+
+        elif method == "initialized":
+            # Client acknowledgment after initialize — notification (no response needed)
+            response_data = {"acknowledged": True}
+
+        elif method == "ping":
+            response_data = {"status": "pong"}
+
+        elif method == "notifications/cancelled":
+            # Client cancelled a pending request — log and acknowledge
+            response_data = {"acknowledged": True, "cancelled_id": params.get("requestId")}
 
         else:
             error_data = {"code": -32601, "message": f"Method '{method}' not implemented."}

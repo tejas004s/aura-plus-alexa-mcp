@@ -9,6 +9,7 @@ Main server entry point combining:
 
 import os
 import json
+import time
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -31,6 +32,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
+SERVER_START_TIME = time.time()
+
 # Enable CORS for developer tools & MCP clients
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +49,17 @@ app.include_router(mcp_router)
 # Mount Static Files & Templates
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "web" / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "web" / "templates"))
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "mcp_spec": "2025-11-25",
+        "uptime_seconds": time.time() - SERVER_START_TIME
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -115,6 +129,26 @@ async def update_ambiance(request: Request):
         scheduled_for=body.get("scheduled_for", "Now")
     )
     return JSONResponse(content=res)
+
+
+@app.get("/health")
+async def health_check():
+    """Production health check endpoint for container orchestrators and monitoring."""
+    from aws_orchestrator.sustainability import resource_tracker
+    return JSONResponse(content={
+        "status": "healthy",
+        "version": "1.0.0",
+        "mcp_spec": "2025-11-25",
+        "uptime_seconds": round(time.time() - SERVER_START_TIME, 1),
+        "sustainability": resource_tracker.get_session_metrics()
+    })
+
+
+@app.get("/api/sustainability")
+async def sustainability_report():
+    """Returns current session environmental impact metrics and optimization suggestions."""
+    from aws_orchestrator.sustainability import resource_tracker
+    return JSONResponse(content=resource_tracker.get_efficiency_report())
 
 
 if __name__ == "__main__":

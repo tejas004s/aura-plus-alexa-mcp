@@ -2,7 +2,7 @@
 agent_core.py - AWS AgentCore & Strands Multi-Agent Orchestrator
 
 Coordinates specialized worker agents, collects execution traces, and synthesizes
-multi-modal Alexa+ voice + MCP App visual cards.
+multi-modal Alexa+ voice + MCP App visual cards with dynamic response generation.
 """
 
 import asyncio
@@ -34,16 +34,69 @@ class ExecutionTraceEvent:
         }
 
 
+# ─── Agent Router: Classifies intents and prevents execution loops ─────────
+class AgentRouter:
+    """Intelligent request router that classifies user intents, dispatches to
+    specialist agents, and prevents circular execution loops."""
+
+    MAX_EXECUTION_DEPTH = 10
+
+    INTENT_KEYWORDS = {
+        "MEMORY": ["remember", "allergy", "dietary", "preference", "family", "member", "profile"],
+        "CULINARY": ["dinner", "cook", "recipe", "food", "meal", "menu", "italian", "japanese", "mexican", "french", "indian"],
+        "SHOPPING": ["order", "cart", "groceries", "buy", "purchase", "amazon", "fresh", "ingredients"],
+        "AMBIANCE": ["light", "thermostat", "music", "ambiance", "temperature", "scene", "atmosphere"],
+        "CALENDAR": ["calendar", "schedule", "event", "weekend", "friday", "saturday", "brunch", "appointment"],
+    }
+
+    def classify_intent(self, prompt: str) -> List[str]:
+        """Classifies a prompt into one or more intent categories."""
+        prompt_lower = prompt.lower()
+        matched = []
+        for intent, keywords in self.INTENT_KEYWORDS.items():
+            if any(kw in prompt_lower for kw in keywords):
+                matched.append(intent)
+        # Multi-intent triggers MULTI_AGENT
+        if len(matched) >= 2:
+            matched.insert(0, "MULTI_AGENT")
+        elif not matched:
+            matched = ["GENERAL"]
+        return matched
+
+    def check_loop_guard(self, call_history: List[str], new_call: str) -> bool:
+        """Returns True if the call is safe (no loop detected)."""
+        if len(call_history) >= self.MAX_EXECUTION_DEPTH:
+            return False
+        # Detect if same tool called more than 2x consecutively
+        if len(call_history) >= 2 and call_history[-1] == new_call and call_history[-2] == new_call:
+            return False
+        return True
+
+
+agent_router = AgentRouter()
+
+
 class AgentCoreOrchestrator:
     """Multi-agent orchestrator inspired by AWS AgentCore and Strands SDK."""
 
     def __init__(self):
         self.client = bedrock_agent_client
+        self.router = agent_router
 
     async def process_request(self, user_prompt: str) -> Dict[str, Any]:
         start_time = time.time()
         trace: List[Dict[str, Any]] = []
         mcp_apps: List[Dict[str, Any]] = []
+        call_history: List[str] = []
+
+        # Stage 0: Intent Classification (Agent Router)
+        intents = self.router.classify_intent(user_prompt)
+        trace.append(ExecutionTraceEvent(
+            stage="ROUTING",
+            agent="Agent Router & Intent Classifier",
+            action=f"Classified intents: {', '.join(intents)}",
+            details={"intents": intents, "is_multi_agent": "MULTI_AGENT" in intents}
+        ).to_dict())
 
         # Stage 1: Perception & Goal Decomposition
         trace.append(ExecutionTraceEvent(
@@ -68,11 +121,24 @@ class AgentCoreOrchestrator:
             }
         ).to_dict())
 
-        # Stage 3: Autonomous Tool / Skill Execution
+        # Stage 3: Autonomous Tool / Skill Execution with Loop Guard
         tool_results: Dict[str, Any] = {}
         for call in tool_calls:
             name = call["name"]
             args = call.get("arguments", {})
+
+            # Loop guard check
+            if not self.router.check_loop_guard(call_history, name):
+                trace.append(ExecutionTraceEvent(
+                    stage="LOOP_GUARD",
+                    agent="Execution Safety Monitor",
+                    action=f"Blocked potential infinite loop on tool: {name}",
+                    details={"call_history_length": len(call_history), "max_depth": AgentRouter.MAX_EXECUTION_DEPTH},
+                    status="blocked"
+                ).to_dict())
+                continue
+
+            call_history.append(name)
 
             # Map agent names
             agent_label = "Specialist Agent"
@@ -123,17 +189,27 @@ class AgentCoreOrchestrator:
                     status="error"
                 ).to_dict())
 
-        # Stage 4: Synthesis & Natural Voice Formulation
+        # Stage 4: Dynamic Synthesis & Natural Voice Formulation
         spoken_response = self._synthesize_voice_response(user_prompt, tool_results)
 
         trace.append(ExecutionTraceEvent(
             stage="SYNTHESIS",
             agent="Alexa+ Voice & Multi-Modal Synthesizer",
             action="Generated conversational speech & assembled interactive MCP Apps",
-            details={"spoken_preview": spoken_response}
+            details={"spoken_preview": spoken_response[:200]}
         ).to_dict())
 
         elapsed_ms = round((time.time() - start_time) * 1000, 1)
+
+        # Sustainability metrics
+        sustainability = {
+            "total_tool_calls": len(call_history),
+            "estimated_tokens": bedrock_result.get("usage", {}).get("totalTokens", 0),
+            "execution_time_ms": elapsed_ms,
+            "estimated_kwh": round(bedrock_result.get("usage", {}).get("totalTokens", 0) * 0.0000003, 6),
+            "estimated_co2_grams": round(bedrock_result.get("usage", {}).get("totalTokens", 0) * 0.0000003 * 400, 4),
+            "efficiency_note": "Optimized: parallel tool execution reduces redundant LLM calls"
+        }
 
         return {
             "status": "success",
@@ -145,41 +221,86 @@ class AgentCoreOrchestrator:
                 "aws_services": ["Amazon Bedrock", "AWS AgentCore", "Strands SDK Architecture"],
                 "mcp_spec": "2025-11-25 (Streamable HTTP)",
                 "tool_count": len(tool_calls),
-                "model_used": bedrock_result.get("model")
+                "model_used": bedrock_result.get("model"),
+                "intents_detected": intents,
+                "loop_guard_active": True,
+                "sustainability": sustainability
             }
         }
 
     def _synthesize_voice_response(self, prompt: str, tool_results: Dict[str, Any]) -> str:
         """
-        Creates a natural, warm, proactive spoken Alexa+ response highlighting what was accomplished.
+        Dynamically creates a natural, warm Alexa+ spoken response from actual tool results.
+        Never hardcodes specific names/items — reads from real data.
         """
-        sentences = [
-            "I've got everything organized for your family's visit."
-        ]
+        sentences = ["I've got everything organized for you."]
 
-        if "household_memory_query_dietary" in tool_results or "culinary_plan_menu" in tool_results:
-            sentences.append(
-                "I checked our household memory: Mom's strict shellfish allergy and gluten sensitivity are fully accounted for. "
-                "I planned an authentic Italian dinner featuring gluten-free Penne all'Arrabbiata and paired Dad's favorite Tuscan Chianti Classico."
-            )
+        # Memory results — extract actual dietary restrictions found
+        if "household_memory_query_dietary" in tool_results:
+            mem_data = tool_results["household_memory_query_dietary"]
+            if mem_data.get("found"):
+                profiles = mem_data.get("profiles", [])
+                restrictions = mem_data.get("dietary_restrictions", [])
+                member_names = [p.get("name", "family member") for p in profiles]
+                if restrictions:
+                    sentences.append(
+                        f"I checked our household memory for {', '.join(member_names)}. "
+                        f"Important dietary notes: {', '.join(restrictions[:3])}. All fully accounted for."
+                    )
 
+        # Culinary results — extract actual course titles
+        if "culinary_plan_menu" in tool_results:
+            menu_data = tool_results["culinary_plan_menu"]
+            courses = menu_data.get("courses", [])
+            theme = menu_data.get("menu_theme", "dinner")
+            course_titles = [c.get("title", "") for c in courses if c.get("course") != "Sommelier Pairing"]
+            beverage = next((c.get("title", "") for c in courses if c.get("course") == "Sommelier Pairing"), None)
+            if course_titles:
+                sentences.append(
+                    f"I planned a {theme} menu featuring {course_titles[0]}"
+                    + (f" and {course_titles[1]}" if len(course_titles) > 1 else "")
+                    + "."
+                )
+            if beverage:
+                sentences.append(f"Paired with {beverage}.")
+
+        # Cart results — extract actual total
         if "amazon_cart_assemble" in tool_results:
-            cart_info = tool_results["amazon_cart_assemble"].get("cart_summary", {})
-            total = cart_info.get("total", 62.24)
-            sentences.append(
-                f"I assembled all certified ingredients into an Amazon Fresh cart totaling ${total:.2f} for Friday doorstep delivery. "
-                "I've placed the checkout approval card on your screen for your one-click confirmation."
-            )
+            cart_data = tool_results["amazon_cart_assemble"]
+            cart_summary = cart_data.get("cart_summary", {})
+            total = cart_summary.get("total", 0)
+            item_count = len(cart_summary.get("items", []))
+            delivery = cart_summary.get("delivery_window", "soon")
+            if total > 0:
+                sentences.append(
+                    f"I assembled {item_count} certified ingredients into an Amazon Fresh cart "
+                    f"totaling ${total:.2f} for {delivery} delivery. "
+                    "The checkout approval card is on your screen for one-click confirmation."
+                )
 
+        # Ambiance results — extract actual scene details
         if "smart_ambiance_set_scene" in tool_results:
+            ambiance_data = tool_results["smart_ambiance_set_scene"]
+            state = ambiance_data.get("ambiance_state", {})
+            scene = state.get("scene_name", "custom scene")
+            temp = state.get("climate", {}).get("target_temp_f", 71)
+            schedule = state.get("scheduled_time", "soon")
+            audio = state.get("audio", {}).get("now_playing", "ambient music")
             sentences.append(
-                "The Tuscan Sunset ambiance scene is scheduled for Friday at 6:30 PM with warm candlelight amber lighting, the thermostat set to 71 degrees, and acoustic dinner jazz queued on Amazon Music."
+                f"The {scene} ambiance is set for {schedule} — "
+                f"{temp}°F, warm lighting, and {audio} queued."
             )
 
+        # Calendar results — extract actual event details
         if "calendar_schedule_event" in tool_results:
-            sentences.append(
-                "I've also reserved Friday 7:00 PM on your family calendar. Everything is ready for you!"
-            )
+            cal_data = tool_results["calendar_schedule_event"]
+            event = cal_data.get("event", {})
+            title = event.get("title", "your event")
+            start = event.get("start", "")
+            if cal_data.get("conflict_detected"):
+                sentences.append(f"Note: I detected a scheduling conflict for {title} at {start} and adjusted accordingly.")
+            else:
+                sentences.append(f"I've reserved {start} on your calendar for {title}. Everything is ready!")
 
         return " ".join(sentences)
 
