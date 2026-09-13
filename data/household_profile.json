@@ -1,0 +1,71 @@
+{
+  "household_id": "hh_amazon_hackathon_demo",
+  "name": "The Henderson Residence",
+  "primary_user": "Alex Henderson",
+  "members": [
+    {
+      "name": "Mom (Elena)",
+      "relation": "Mother",
+      "dietary_restrictions": ["Strict Shellfish Allergy", "Gluten-Sensitive"],
+      "preferences": ["Loves Mediterranean cuisine", "Prefers decaf beverages in evening"],
+      "frequent_guest": true
+    },
+    {
+      "name": "Dad (Robert)",
+      "relation": "Father",
+      "dietary_restrictions": ["Low-Sodium preference"],
+      "preferences": ["Loves bold Tuscan Chianti wines", "Enjoys acoustic jazz dinner playlists"],
+      "frequent_guest": true
+    },
+    {
+      "name": "Alex",
+      "relation": "Self",
+      "dietary_restrictions": ["None"],
+      "preferences": ["Enjoys Italian cooking", "Early riser"]
+    }
+  ],
+  "preferences": {
+    "dining_ambiance": {
+      "thermostat_target_f": 71,
+      "lighting_scene": "Tuscan Sunset",
+      "color_temp_k": 2700,
+      "brightness_pct": 45,
+      "audio_playlist": "Warm Acoustic Dinner Jazz on Amazon Music"
+    },
+    "default_delivery_address": "410 Terry Ave N, Seattle, WA 98109",
+    "payment_method_last4": "8821",
+    "delivery_preference": "Amazon Fresh Doorstep Delivery (Friday 4:00 PM - 6:00 PM)"
+  },
+  "connected_devices": [
+    {
+      "id": "dev_echo_show_15",
+      "name": "Kitchen Echo Show 15",
+      "type": "Alexa+ Smart Display",
+      "capabilities": ["display", "voice", "mcp_apps", "streamable_http"],
+      "status": "online"
+    },
+    {
+      "id": "dev_fire_tv_omni",
+      "name": "Living Room Fire TV Omni",
+      "type": "Fire TV",
+      "capabilities": ["video", "audio", "ambient_mode"],
+      "status": "online"
+    },
+    {
+      "id": "dev_ring_doorbell",
+      "name": "Front Door Ring Video Doorbell Pro",
+      "type": "Ring Doorbell",
+      "capabilities": ["camera", "two_way_audio", "access_control"],
+      "status": "online"
+    },
+    {
+      "id": "dev_smart_thermostat",
+      "name": "Living Room Smart Thermostat",
+      "type": "Climate",
+      "capabilities": ["temperature_control", "scheduling"],
+      "current_temp_f": 68,
+      "target_temp_f": 71,
+      "status": "online"
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura+ | Autonomous Alexa+ Concierge & MCP Server</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <div class="alexa-ring-small"></div>
+        <span class="brand-title">Aura<span class="brand-plus">+</span></span>
+      </div>
+      <span class="brand-subtitle">Autonomous Concierge for Alexa+ & AWS Bedrock</span>
+    </div>
+
+    <div class="header-status-bar">
+      <div class="status-pill">
+        <span class="status-dot dot-cyan"></span>
+        <span class="status-label">MCP 2025-11-25 (Streamable HTTP)</span>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot dot-orange"></span>
+        <span class="status-label">AWS Bedrock & AgentCore</span>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot dot-green"></span>
+        <span class="status-label">Memory Synced</span>
+      </div>
+      <button id="memory-toggle-btn" class="header-btn" title="Inspect Household Memory">
+        🧠 Memory Store
+      </button>
+    </div>
+  </header>
+
+  <!-- Judge Showcase Prompt Ribbon -->
+  <div class="showcase-ribbon">
+    <span class="ribbon-label">⚡ 1-Click Judge Showcase:</span>
+    <button class="showcase-btn active-showcase" onclick="runShowcase('grand_slam')">
+      🌟 <strong>Family Weekend Prep</strong> (Dinner, Amazon Cart, Ambiance, Calendar)
+    </button>
+    <button class="showcase-btn" onclick="runShowcase('allergy_audit')">
+      🛡️ <strong>Safety & Allergy Audit</strong> (Query Cross-Session Memory)
+    </button>
+    <button class="showcase-btn" onclick="runShowcase('wine_ambiance')">
+      🍷 <strong>Evening Ambiance & Sommelier</strong> (IoT & Music)
+    </button>
+  </div>
+
+  <!-- Main Grid Workspace -->
+  <main class="main-container">
+    
+    <!-- Left Column: Alexa+ Visual & Generative UI -->
+    <section class="assistant-viewport">
+      
+      <!-- Ambient Alexa+ Voice Orb -->
+      <div class="orb-stage">
+        <div id="alexa-orb" class="alexa-orb idle">
+          <div class="orb-core"></div>
+          <div class="orb-ring ring-1"></div>
+          <div class="orb-ring ring-2"></div>
+          <div class="orb-glow"></div>
+        </div>
+        <div id="orb-status" class="orb-status-text">Alexa+ is ready. Ask or tap a showcase workflow above.</div>
+      </div>
+
+      <!-- Dialogue & Conversational Stream -->
+      <div id="dialogue-feed" class="dialogue-feed">
+        <!-- Initial Welcome Message -->
+        <div class="message-bubble assistant-message">
+          <div class="message-header">
+            <span class="message-sender">Aura+ Concierge</span>
+            <span class="message-time">Just now</span>
+          </div>
+          <div class="message-body">
+            Hello Alex! I am your <strong>Alexa+ Autonomous Concierge</strong>. I remember your household preferences, Mom's shellfish & gluten restrictions, Dad's Chianti preference, and your smart home setup. Tap any 1-Click Showcase prompt above or speak to orchestrate your home.
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Generative UI: MCP Apps Canvas -->
+      <div id="mcp-apps-canvas" class="mcp-apps-canvas">
+        <!-- MCP Apps (Recipe Carousel, Cart Card, Scene Card) will render here dynamically -->
+      </div>
+
+      <!-- Input Bar (Voice & Text) -->
+      <div class="interaction-bar">
+        <button id="voice-btn" class="mic-btn" title="Voice Input (Speech-to-Text)">
+          <svg class="mic-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <input 
+          type="text" 
+          id="user-input" 
+          class="text-input" 
+          placeholder="Ask Alexa+ (e.g. 'Prepare the house and dinner for my parents this Friday...')" 
+          autocomplete="off"
+        />
+        <button id="send-btn" class="send-btn">
+          <span>Orchestrate</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Column: Agent Brain & Diagnostics Trace -->
+    <aside class="trace-sidebar">
+      
+      <!-- Tab Header -->
+      <div class="sidebar-tabs">
+        <button id="tab-trace" class="tab-btn active" onclick="switchSidebarTab('trace')">
+          ⚡ Agent Brain Trace
+        </button>
+        <button id="tab-memory" class="tab-btn" onclick="switchSidebarTab('memory')">
+          🧠 Memory & Devices
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Real-time Multi-Agent Execution Trace -->
+      <div id="tab-content-trace" class="tab-pane active">
+        <div class="trace-header-meta">
+          <div class="meta-item">
+            <span class="meta-label">Architecture</span>
+            <span class="meta-val">AWS Bedrock + AgentCore / Strands</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Protocol</span>
+            <span class="meta-val">MCP 2025-11-25 (Streamable HTTP)</span>
+          </div>
+          <div id="exec-time-badge" class="meta-item">
+            <span class="meta-label">Latency</span>
+            <span class="meta-val highlight">Ready</span>
+          </div>
+        </div>
+
+        <div id="trace-timeline" class="trace-timeline">
+          <div class="trace-empty-state">
+            <div class="pulse-icon">📡</div>
+            <h4>Autonomous Agent Pipeline Ready</h4>
+            <p>Execution steps, model reasoning DAGs, and MCP tool invocations will stream here in real time.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Household Memory & Device Inspector -->
+      <div id="tab-content-memory" class="tab-pane">
+        <div class="memory-inspector">
+          <h3 class="pane-title">Persistent Household Memory</h3>
+          <p class="pane-desc">Cross-session knowledge preserved across interactions and devices.</p>
+
+          <!-- Members & Dietary -->
+          <div class="memory-card">
+            <div class="memory-card-header">
+              <span class="card-icon">👥</span>
+              <strong>Household Profiles & Dietary Rules</strong>
+            </div>
+            <div class="member-list">
+              {% for member in household.members %}
+              <div class="member-item">
+                <div class="member-name-row">
+                  <span class="member-name">{{ member.name }}</span>
+                  <span class="member-rel">{{ member.relation }}</span>
+                </div>
+                {% if member.dietary_restrictions %}
+                <div class="badge-row">
+                  {% for diet in member.dietary_restrictions %}
+                  <span class="diet-badge critical">{{ diet }}</span>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                <div class="member-prefs">
+                  {% for p in member.preferences %}
+                  <div class="pref-text">• {{ p }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Quick Teach Form -->
+          <div class="memory-card teach-card">
+            <div class="memory-card-header">
+              <span class="card-icon">✍️</span>
+              <strong>Teach Alexa+ a New Memory</strong>
+            </div>
+            <div class="teach-form">
+              <input type="text" id="teach-member" placeholder="Target member (e.g. Mom)" class="mini-input">
+              <input type="text" id="teach-fact" placeholder="New preference or allergy" class="mini-input">
+              <button onclick="commitNewMemory()" class="teach-submit-btn">Save to Memory Store</button>
+            </div>
+          </div>
+
+          <!-- Connected Devices -->
+          <div class="memory-card">
+            <div class="memory-card-header">
+              <span class="card-icon">📡</span>
+              <strong>Connected Amazon Ecosystem</strong>
+            </div>
+            <div class="device-grid">
+              {% for dev in connected_devices %}
+              <div class="device-badge">
+                <span class="device-status-dot online"></span>
+                <div class="device-info">
+                  <span class="dev-name">{{ dev.name }}</span>
+                  <span class="dev-type">{{ dev.type }}</span>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

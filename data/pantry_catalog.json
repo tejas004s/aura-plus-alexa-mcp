@@ -1,0 +1,86 @@
+[
+  {
+    "asin": "B08N5WRWNW",
+    "name": "Organic Gluten-Free Penne Rigate Pasta (16 oz)",
+    "brand": "365 by Whole Foods Market",
+    "category": "Pantry",
+    "price": 3.49,
+    "rating": 4.8,
+    "dietary": ["Gluten-Free", "Vegetarian", "Organic"],
+    "image_url": "https://images.unsplash.com/photo-1621996346565-e3d5d62816dd?w=400",
+    "in_stock": true,
+    "unit": "16 oz box"
+  },
+  {
+    "asin": "B0798CVSW8",
+    "name": "San Marzano Whole Peeled Tomatoes DOP (28 oz)",
+    "brand": "Rega",
+    "category": "Pantry",
+    "price": 4.99,
+    "rating": 4.9,
+    "dietary": ["Gluten-Free", "Vegan", "Non-GMO"],
+    "image_url": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400",
+    "in_stock": true,
+    "unit": "28 oz can"
+  },
+  {
+    "asin": "B01D9E7190",
+    "name": "Fresh Organic Basil Herb Bundle",
+    "brand": "Whole Foods Market Organic",
+    "category": "Produce",
+    "price": 2.29,
+    "rating": 4.7,
+    "dietary": ["Organic", "Vegan"],
+    "image_url": "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=400",
+    "in_stock": true,
+    "unit": "1 bunch"
+  },
+  {
+    "asin": "B07L5P4Q2M",
+    "name": "Parmigiano Reggiano Aged 24 Months Wedge (8 oz)",
+    "brand": "Zanetti",
+    "category": "Dairy & Cheese",
+    "price": 7.99,
+    "rating": 4.9,
+    "dietary": ["Gluten-Free", "Vegetarian"],
+    "image_url": "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400",
+    "in_stock": true,
+    "unit": "8 oz wedge"
+  },
+  {
+    "asin": "B083Q5T81P",
+    "name": "Villa Antinori Chianti Classico Riserva 2019 (750 ml)",
+    "brand": "Marchesi Antinori",
+    "category": "Wine & Spirits",
+    "price": 24.99,
+    "rating": 4.9,
+    "dietary": ["Vegetarian"],
+    "image_url": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400",
+    "in_stock": true,
+    "unit": "750 ml bottle"
+  },
+  {
+    "asin": "B07C64D3K2",
+    "name": "Extra Virgin Cold-Pressed Olive Oil (1 Liter)",
+    "brand": "California Olive Ranch",
+    "category": "Pantry",
+    "price": 14.49,
+    "rating": 4.8,
+    "dietary": ["Vegan", "Gluten-Free", "Non-GMO"],
+    "image_url": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400",
+    "in_stock": true,
+    "unit": "1 L bottle"
+  },
+  {
+    "asin": "B0912XYZ77",
+    "name": "Artisanal Gluten-Free Tiramisu Dessert (Serves 4)",
+    "brand": "Sweet Italia Artisan",
+    "category": "Bakery & Desserts",
+    "price": 8.99,
+    "rating": 4.7,
+    "dietary": ["Gluten-Free", "Vegetarian"],
+    "image_url": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400",
+    "in_stock": true,
+    "unit": "4 servings"
+  }
+]
