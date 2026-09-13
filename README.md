@@ -179,6 +179,8 @@ Aura+ strictly conforms to the Model Context Protocol over Streamable HTTP:
 - **Product Feedback & AWS Review:** [docs/product_feedback.md](file:///home/vboxuser/amazon_hackathon/docs/product_feedback.md)
 - **3-Minute Demo Video Script:** [docs/demo_video_script.md](file:///home/vboxuser/amazon_hackathon/docs/demo_video_script.md)
 - **Implementation Plan:** [docs/implementation_plan1.md](file:///home/vboxuser/amazon_hackathon/implementation_plan1.md)
+- **Reference Learning (MCP Streamable HTTP):** [MCP Specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)
+- **Reference Learning (Agent Skills):** [Build with Agent Skills](https://apps.extensions.modelcontextprotocol.io/api/#build-with-agent-skills)
 
 ---
 
