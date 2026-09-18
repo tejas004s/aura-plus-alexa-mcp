@@ -23,7 +23,7 @@ class BedrockAgentClient:
     def __init__(
         self,
         region_name: str = "us-east-1",
-        model_id: str = "us.anthropic.claude-sonnet-5"
+        model_id: str = "amazon.nova-pro-v1:0"
     ):
         self.region_name = os.environ.get("AWS_REGION", region_name)
         self.model_id = os.environ.get("BEDROCK_MODEL_ID", model_id)
